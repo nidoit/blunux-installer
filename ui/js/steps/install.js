@@ -1,4 +1,4 @@
-// Install step - runs the actual installation
+// 설치 단계 - 실제 설치 실행
 
 let progressInterval = null;
 
@@ -10,8 +10,8 @@ async function onEnter_install() {
   document.getElementById('install-progress-container').style.display = 'block';
 
   try {
-    // Step 1: Auto-partition the disk
-    updateProgressUI(0, 12, 'Partitioning disk...');
+    // 1단계: 디스크 자동 파티셔닝
+    updateProgressUI(0, 12, '디스크 파티셔닝 중...');
 
     await invoke('auto_partition', {
       disk: state.selectedDisk,
@@ -21,8 +21,8 @@ async function onEnter_install() {
       }
     });
 
-    // Step 2: Format partitions
-    updateProgressUI(1, 12, 'Formatting partitions...');
+    // 2단계: 파티션 포맷
+    updateProgressUI(1, 12, '파티션 포맷 중...');
 
     await invoke('format_partition', {
       partition: state.efiPartition,
@@ -41,7 +41,7 @@ async function onEnter_install() {
       });
     }
 
-    // Step 3: Start the main install (async, runs in background)
+    // 3단계: 메인 설치 시작 (비동기, 백그라운드에서 실행)
     await invoke('run_install', {
       config: {
         disk: state.selectedDisk,
@@ -62,7 +62,7 @@ async function onEnter_install() {
       }
     });
 
-    // Poll progress
+    // 진행 상황 폴링 시작
     startProgressPolling();
   } catch (e) {
     showError(String(e));
@@ -88,7 +88,7 @@ function startProgressPolling() {
         }
       }
     } catch (e) {
-      // Ignore poll errors
+      // 폴링 오류 무시
     }
   }, 1000);
 }
@@ -98,6 +98,11 @@ function updateProgressUI(step, total, message) {
   document.getElementById('progress-fill').style.width = `${percent}%`;
   document.getElementById('progress-message').textContent = message;
   document.getElementById('progress-percent').textContent = `${percent}%`;
+
+  const stepLabel = document.getElementById('progress-step-label');
+  if (stepLabel) {
+    stepLabel.textContent = `${step} / ${total} 단계`;
+  }
 }
 
 function showDone() {
@@ -113,17 +118,17 @@ function showError(msg) {
 
 document.getElementById('btn-reboot')?.addEventListener('click', async () => {
   try {
-    // Unmount before reboot
+    // 재부팅 전 마운트 해제
     await invoke('unmount_all');
   } catch (e) {
-    // Ignore
+    // 무시
   }
 
-  // Use systemctl to reboot
+  // systemctl로 재부팅
   try {
     const { Command } = window.__TAURI__.shell;
     await Command.create('systemctl', ['reboot']).execute();
   } catch (e) {
-    alert('Please reboot manually: systemctl reboot');
+    alert('수동으로 재부팅하세요: systemctl reboot');
   }
 });

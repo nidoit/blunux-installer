@@ -1,4 +1,4 @@
-// Package selection step
+// 패키지 선택 단계
 
 let configPackages = [];
 let extraPackages = [];
@@ -14,9 +14,9 @@ async function loadConfigPackages() {
     configPackages = await invoke('load_config_packages');
     renderPackageGroups(container, configPackages, true);
   } catch (e) {
-    // Config not available (not on live ISO), use defaults
+    // 설정을 사용할 수 없는 경우 (라이브 ISO가 아닌 경우) 기본값 사용
     configPackages = [{
-      name: 'Base System',
+      name: '기본 시스템',
       packages: ['base', 'linux', 'linux-firmware', 'base-devel', 'networkmanager', 'grub', 'efibootmgr', 'sudo', 'vim'],
       required: true
     }];
@@ -31,7 +31,7 @@ async function loadExtraPackages() {
     extraPackages = await invoke('list_available_packages');
     renderPackageGroups(container, extraPackages, false);
   } catch (e) {
-    container.innerHTML = `<p class="error-text">Failed to load extra packages: ${e}</p>`;
+    container.innerHTML = `<p class="error-text">추가 패키지 불러오기 실패: ${e}</p>`;
   }
 }
 
@@ -50,9 +50,9 @@ function renderPackageGroups(container, groups, isConfig) {
         <input type="checkbox" ${group.required ? 'checked disabled' : 'checked'}
                data-config="${isConfig}" data-group="${group.name}" />
         ${escapeHtml(group.name)}
-        <span class="pkg-count">(${group.packages.length} packages)</span>
+        <span class="pkg-count">(${group.packages.length}개 패키지)</span>
       </h4>
-      ${group.required ? '<span class="badge-required">Required</span>' : ''}
+      ${group.required ? '<span class="badge-required">필수</span>' : ''}
     `;
 
     const body = document.createElement('div');
@@ -73,7 +73,7 @@ function renderPackageGroups(container, groups, isConfig) {
 function validate_packages() {
   const selected = [];
 
-  // Gather checked groups
+  // 선택된 그룹 수집
   document.querySelectorAll('.package-group-header input[type="checkbox"]:checked').forEach(cb => {
     const groupName = cb.dataset.group;
     const allGroups = [...configPackages, ...extraPackages];
@@ -83,11 +83,11 @@ function validate_packages() {
     }
   });
 
-  // Deduplicate
+  // 중복 제거
   const unique = [...new Set(selected)];
 
   if (unique.length === 0) {
-    alert('Please select at least one package group.');
+    alert('최소한 하나의 패키지 그룹을 선택하세요.');
     return false;
   }
 

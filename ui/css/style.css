@@ -23,7 +23,7 @@
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   background: var(--bg-primary);
   color: var(--text-primary);
   line-height: 1.6;
@@ -507,11 +507,18 @@ select:focus {
 }
 
 /* === Progress === */
+.progress-step-label {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  text-align: center;
+  margin-bottom: 8px;
+}
+
 .progress-bar {
   width: 100%;
-  height: 8px;
+  height: 12px;
   background: var(--bg-surface);
-  border-radius: 4px;
+  border-radius: 6px;
   overflow: hidden;
   margin-bottom: 16px;
 }
@@ -519,26 +526,40 @@ select:focus {
 .progress-fill {
   height: 100%;
   background: linear-gradient(90deg, var(--accent), var(--success));
-  border-radius: 4px;
+  border-radius: 6px;
   transition: width 0.5s ease;
 }
 
-#progress-message {
-  color: var(--text-secondary);
-  font-size: 0.9rem;
-}
-
 #progress-percent {
-  font-size: 2rem;
+  font-size: 2.5rem;
   font-weight: 700;
   color: var(--accent);
   text-align: center;
   margin: 16px 0;
 }
 
+#progress-message {
+  color: var(--text-secondary);
+  font-size: 1rem;
+  text-align: center;
+}
+
 #install-done h2 {
   color: var(--success);
   margin-bottom: 12px;
+}
+
+/* === WiFi Signal === */
+.wifi-signal {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.signal-bars {
+  font-size: 1rem;
+  color: var(--accent);
+  letter-spacing: 1px;
 }
 
 /* === Errors === */

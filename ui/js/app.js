@@ -1,4 +1,4 @@
-// Blunux Installer - Main App Controller
+// Blunux 설치 프로그램 - 메인 앱 컨트롤러
 
 const { invoke } = window.__TAURI__.core;
 
@@ -9,11 +9,11 @@ const STEPS = [
 
 let currentStepIndex = 0;
 
-// Global state collected across steps
+// 각 단계에서 수집되는 전역 상태
 const installState = {
-  // Network
+  // 네트워크
   networkConnected: false,
-  // Disk
+  // 디스크
   selectedDisk: null,
   rootFstype: 'ext4',
   efiSizeMb: 512,
@@ -21,18 +21,18 @@ const installState = {
   rootPartition: '',
   efiPartition: '',
   swapPartition: '',
-  // Locale
+  // 지역 설정
   timezone: '',
-  locale: 'en_US.UTF-8',
+  locale: 'ko_KR.UTF-8',
   keymap: 'us',
-  // User
+  // 사용자
   hostname: 'blunux',
   username: '',
   password: '',
   rootPassword: '',
-  // Packages
+  // 패키지
   selectedPackages: [],
-  // Bootloader
+  // 부트로더
   bootloader: 'grub',
   enableServices: ['NetworkManager', 'bluetooth', 'sddm', 'fstrim.timer'],
 };
@@ -45,19 +45,19 @@ function updateState(partial) {
   Object.assign(installState, partial);
 }
 
-// Navigation
+// 네비게이션
 function goToStep(index) {
   if (index < 0 || index >= STEPS.length) return;
 
   const oldStep = STEPS[currentStepIndex];
   const newStep = STEPS[index];
 
-  // Hide old step
+  // 이전 단계 숨기기
   document.getElementById(`step-${oldStep}`).classList.remove('active');
-  // Show new step
+  // 새 단계 표시
   document.getElementById(`step-${newStep}`).classList.add('active');
 
-  // Update sidebar
+  // 사이드바 업데이트
   document.querySelectorAll('#step-nav li').forEach((li, i) => {
     li.classList.remove('active');
     if (i < index) li.classList.add('completed');
@@ -66,7 +66,7 @@ function goToStep(index) {
 
   currentStepIndex = index;
 
-  // Update nav buttons
+  // 네비게이션 버튼 업데이트
   const btnPrev = document.getElementById('btn-prev');
   const btnNext = document.getElementById('btn-next');
 
@@ -76,18 +76,18 @@ function goToStep(index) {
     btnNext.style.display = 'none';
     btnPrev.style.display = 'none';
   } else if (newStep === 'summary') {
-    btnNext.textContent = 'Install';
+    btnNext.textContent = '설치';
     btnNext.classList.add('btn-danger');
     btnNext.classList.remove('btn-primary');
     btnNext.style.display = 'inline-block';
   } else {
-    btnNext.textContent = 'Next';
+    btnNext.textContent = '다음';
     btnNext.classList.remove('btn-danger');
     btnNext.classList.add('btn-primary');
     btnNext.style.display = 'inline-block';
   }
 
-  // Fire step enter callback
+  // 단계 진입 콜백 실행
   const enterFn = window[`onEnter_${newStep}`];
   if (typeof enterFn === 'function') enterFn();
 }
@@ -101,7 +101,7 @@ function validateCurrentStep() {
   return true;
 }
 
-// Init
+// 초기화
 document.addEventListener('DOMContentLoaded', () => {
   const btnPrev = document.getElementById('btn-prev');
   const btnNext = document.getElementById('btn-next');
@@ -109,7 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
   btnNext.addEventListener('click', () => {
     if (!validateCurrentStep()) return;
 
-    // If on summary, start install
+    // 요약 단계에서 설치 시작
     if (STEPS[currentStepIndex] === 'summary') {
       goToStep(STEPS.indexOf('install'));
       return;
@@ -122,7 +122,7 @@ document.addEventListener('DOMContentLoaded', () => {
     goToStep(currentStepIndex - 1);
   });
 
-  // Sidebar click navigation (only to completed steps)
+  // 사이드바 클릭 네비게이션 (완료된 단계만)
   document.querySelectorAll('#step-nav li').forEach((li, i) => {
     li.addEventListener('click', () => {
       if (i <= currentStepIndex) {
@@ -131,7 +131,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Bootloader radio cards
+  // 부트로더 라디오 카드
   document.querySelectorAll('.radio-card input[name="bootloader"]').forEach(input => {
     input.addEventListener('change', () => {
       document.querySelectorAll('.radio-card').forEach(c => c.classList.remove('selected'));
@@ -139,6 +139,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Start at welcome
+  // 환영 단계에서 시작
   goToStep(0);
 });

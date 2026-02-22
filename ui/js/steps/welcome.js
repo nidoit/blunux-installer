@@ -1,7 +1,7 @@
-// Welcome step — no special logic needed
+// 환영 단계
 
 function onEnter_welcome() {
-  // NTP sync on entry
+  // 진입 시 NTP 동기화
   invoke('sync_ntp').catch(() => {});
 }
 

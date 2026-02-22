@@ -1,4 +1,4 @@
-// Summary step
+// 요약 단계
 
 function onEnter_summary() {
   const state = getState();
@@ -6,45 +6,45 @@ function onEnter_summary() {
 
   container.innerHTML = `
     <div class="summary-item">
-      <div class="summary-label">Disk</div>
-      <div class="summary-value">${escapeHtml(state.selectedDisk || 'Not selected')}</div>
+      <div class="summary-label">디스크</div>
+      <div class="summary-value">${escapeHtml(state.selectedDisk || '선택되지 않음')}</div>
     </div>
     <div class="summary-item">
-      <div class="summary-label">Filesystem</div>
+      <div class="summary-label">파일 시스템</div>
       <div class="summary-value">${escapeHtml(state.rootFstype)}</div>
     </div>
     <div class="summary-item">
-      <div class="summary-label">Timezone</div>
+      <div class="summary-label">시간대</div>
       <div class="summary-value">${escapeHtml(state.timezone)}</div>
     </div>
     <div class="summary-item">
-      <div class="summary-label">Locale</div>
+      <div class="summary-label">로케일</div>
       <div class="summary-value">${escapeHtml(state.locale)}</div>
     </div>
     <div class="summary-item">
-      <div class="summary-label">Keymap</div>
+      <div class="summary-label">키보드 레이아웃</div>
       <div class="summary-value">${escapeHtml(state.keymap)}</div>
     </div>
     <div class="summary-item">
-      <div class="summary-label">Hostname</div>
+      <div class="summary-label">호스트명</div>
       <div class="summary-value">${escapeHtml(state.hostname)}</div>
     </div>
     <div class="summary-item">
-      <div class="summary-label">Username</div>
+      <div class="summary-label">사용자 이름</div>
       <div class="summary-value">${escapeHtml(state.username)}</div>
     </div>
     <div class="summary-item">
-      <div class="summary-label">Bootloader</div>
+      <div class="summary-label">부트로더</div>
       <div class="summary-value">${escapeHtml(state.bootloader)}</div>
     </div>
     <div class="summary-item" style="grid-column: span 2;">
-      <div class="summary-label">Packages (${state.selectedPackages.length})</div>
+      <div class="summary-label">패키지 (${state.selectedPackages.length}개)</div>
       <div class="summary-value" style="font-size: 0.85rem; font-weight: normal; word-break: break-all;">
         ${state.selectedPackages.map(p => escapeHtml(p)).join(', ')}
       </div>
     </div>
     <div class="summary-item" style="grid-column: span 2;">
-      <div class="summary-label">Enabled Services</div>
+      <div class="summary-label">활성화할 서비스</div>
       <div class="summary-value" style="font-size: 0.85rem; font-weight: normal;">
         ${state.enableServices.map(s => escapeHtml(s)).join(', ')}
       </div>
@@ -53,8 +53,8 @@ function onEnter_summary() {
 }
 
 function validate_summary() {
-  // Confirm before proceeding to install
-  return confirm('Are you sure you want to start the installation? All data on the selected disk will be erased.');
+  // 설치 진행 전 확인
+  return confirm('설치를 시작하시겠습니까? 선택한 디스크의 모든 데이터가 삭제됩니다.');
 }
 
 function escapeHtml(str) {

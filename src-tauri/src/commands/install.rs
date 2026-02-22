@@ -8,7 +8,7 @@ static PROGRESS: std::sync::LazyLock<Arc<Mutex<InstallProgress>>> =
         Arc::new(Mutex::new(InstallProgress {
             step: 0,
             total_steps: 12,
-            message: "Waiting to start...".into(),
+            message: "시작 대기 중...".into(),
             percent: 0,
             finished: false,
             error: None,
@@ -68,7 +68,7 @@ fn set_finished() {
     if let Ok(mut p) = PROGRESS.lock() {
         p.finished = true;
         p.percent = 100;
-        p.message = "Installation complete!".into();
+        p.message = "설치 완료!".into();
     }
 }
 
@@ -112,7 +112,7 @@ pub async fn run_install(config: InstallConfig) -> Result<String, String> {
         *p = InstallProgress {
             step: 0,
             total_steps: 12,
-            message: "Starting installation...".into(),
+            message: "설치 시작 중...".into(),
             percent: 0,
             finished: false,
             error: None,
@@ -127,14 +127,14 @@ pub async fn run_install(config: InstallConfig) -> Result<String, String> {
         }
     });
 
-    Ok("Installation started".into())
+    Ok("설치가 시작되었습니다".into())
 }
 
 fn do_install(cfg: &InstallConfig) -> Result<(), String> {
     let total = 12u32;
 
-    // Step 1: Mount filesystems
-    update_progress(1, total, "Mounting filesystems...");
+    // 1단계: 파일 시스템 마운트
+    update_progress(1, total, "파일 시스템 마운트 중...");
     std::fs::create_dir_all("/mnt").map_err(|e| format!("mkdir /mnt: {e}"))?;
     run_cmd("mount", &[&cfg.root_partition, "/mnt"])?;
 
@@ -145,20 +145,20 @@ fn do_install(cfg: &InstallConfig) -> Result<(), String> {
         let _ = run_cmd("swapon", &[swap.as_str()]);
     }
 
-    // Step 2: Pacstrap base system
-    update_progress(2, total, "Installing base system (pacstrap)...");
+    // 2단계: 기본 시스템 설치
+    update_progress(2, total, "기본 시스템 설치 중 (pacstrap)...");
     let mut pacstrap_args: Vec<&str> = vec!["/mnt"];
     let pkg_refs: Vec<&str> = cfg.packages.iter().map(|s| s.as_str()).collect();
     pacstrap_args.extend(&pkg_refs);
     run_cmd("pacstrap", &pacstrap_args)?;
 
-    // Step 3: Generate fstab
-    update_progress(3, total, "Generating fstab...");
+    // 3단계: fstab 생성
+    update_progress(3, total, "fstab 생성 중...");
     let fstab = run_cmd("genfstab", &["-U", "/mnt"])?;
     std::fs::write("/mnt/etc/fstab", &fstab).map_err(|e| format!("write fstab: {e}"))?;
 
-    // Step 4: Set timezone
-    update_progress(4, total, "Configuring timezone...");
+    // 4단계: 시간대 설정
+    update_progress(4, total, "시간대 설정 중...");
     let tz_path = format!("/usr/share/zoneinfo/{}", cfg.timezone);
     run_cmd(
         "arch-chroot",
@@ -166,8 +166,8 @@ fn do_install(cfg: &InstallConfig) -> Result<(), String> {
     )?;
     run_cmd("arch-chroot", &["/mnt", "hwclock", "--systohc"])?;
 
-    // Step 5: Set locale
-    update_progress(5, total, "Configuring locale...");
+    // 5단계: 로케일 설정
+    update_progress(5, total, "로케일 설정 중...");
     let locale_gen_content = format!("{} UTF-8\n", cfg.locale);
     std::fs::write("/mnt/etc/locale.gen", &locale_gen_content)
         .map_err(|e| format!("write locale.gen: {e}"))?;
@@ -177,14 +177,14 @@ fn do_install(cfg: &InstallConfig) -> Result<(), String> {
     std::fs::write("/mnt/etc/locale.conf", &locale_conf)
         .map_err(|e| format!("write locale.conf: {e}"))?;
 
-    // Step 6: Set keymap
-    update_progress(6, total, "Configuring keyboard...");
+    // 6단계: 키보드 설정
+    update_progress(6, total, "키보드 설정 중...");
     let vconsole = format!("KEYMAP={}\n", cfg.keymap);
     std::fs::write("/mnt/etc/vconsole.conf", &vconsole)
         .map_err(|e| format!("write vconsole.conf: {e}"))?;
 
-    // Step 7: Set hostname
-    update_progress(7, total, "Configuring hostname...");
+    // 7단계: 호스트명 설정
+    update_progress(7, total, "호스트명 설정 중...");
     std::fs::write("/mnt/etc/hostname", &cfg.hostname)
         .map_err(|e| format!("write hostname: {e}"))?;
 
@@ -194,8 +194,8 @@ fn do_install(cfg: &InstallConfig) -> Result<(), String> {
     );
     std::fs::write("/mnt/etc/hosts", &hosts).map_err(|e| format!("write hosts: {e}"))?;
 
-    // Step 8: Set root password
-    update_progress(8, total, "Setting root password...");
+    // 8단계: 루트 비밀번호 설정
+    update_progress(8, total, "루트 비밀번호 설정 중...");
     let chpasswd_input = format!("root:{}", cfg.root_password);
     let mut child = Command::new("arch-chroot")
         .args(["/mnt", "chpasswd"])
@@ -210,11 +210,11 @@ fn do_install(cfg: &InstallConfig) -> Result<(), String> {
     }
     let status = child.wait().map_err(|e| format!("chpasswd wait: {e}"))?;
     if !status.success() {
-        return Err("Failed to set root password".into());
+        return Err("루트 비밀번호 설정 실패".into());
     }
 
-    // Step 9: Create user
-    update_progress(9, total, "Creating user account...");
+    // 9단계: 사용자 계정 생성
+    update_progress(9, total, "사용자 계정 생성 중...");
     run_cmd(
         "arch-chroot",
         &[
@@ -250,8 +250,8 @@ fn do_install(cfg: &InstallConfig) -> Result<(), String> {
     std::fs::write("/mnt/etc/sudoers.d/wheel", sudoers)
         .map_err(|e| format!("write sudoers: {e}"))?;
 
-    // Step 10: Install bootloader
-    update_progress(10, total, "Installing bootloader...");
+    // 10단계: 부트로더 설치
+    update_progress(10, total, "부트로더 설치 중...");
     match cfg.bootloader.as_str() {
         "grub" => {
             run_cmd(
@@ -292,8 +292,8 @@ fn do_install(cfg: &InstallConfig) -> Result<(), String> {
         other => return Err(format!("Unknown bootloader: {other}")),
     }
 
-    // Step 11: Enable services
-    update_progress(11, total, "Enabling system services...");
+    // 11단계: 시스템 서비스 활성화
+    update_progress(11, total, "시스템 서비스 활성화 중...");
     for service in &cfg.enable_services {
         let _ = run_cmd(
             "arch-chroot",
@@ -301,8 +301,8 @@ fn do_install(cfg: &InstallConfig) -> Result<(), String> {
         );
     }
 
-    // Step 12: Copy Blunux branding
-    update_progress(12, total, "Finalizing installation...");
+    // 12단계: Blunux 브랜딩 복사
+    update_progress(12, total, "설치 마무리 중...");
     // Copy os-release branding if available
     if std::path::Path::new("/etc/blunux/os-release").exists() {
         let _ = std::fs::copy("/etc/blunux/os-release", "/mnt/etc/os-release");

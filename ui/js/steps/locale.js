@@ -1,4 +1,4 @@
-// Locale & Timezone step
+// 지역 및 시간대 설정 단계
 
 let timezoneData = [];
 let localeData = [];
@@ -13,7 +13,7 @@ async function loadTimezones() {
 
   try {
     timezoneData = await invoke('list_timezones');
-    regionSelect.innerHTML = '<option value="">Select region...</option>';
+    regionSelect.innerHTML = '<option value="">지역 선택...</option>';
 
     for (const tz of timezoneData) {
       const opt = document.createElement('option');
@@ -25,7 +25,7 @@ async function loadTimezones() {
     regionSelect.addEventListener('change', () => {
       const region = regionSelect.value;
       const tzEntry = timezoneData.find(t => t.region === region);
-      citySelect.innerHTML = '<option value="">Select city...</option>';
+      citySelect.innerHTML = '<option value="">도시 선택...</option>';
 
       if (tzEntry) {
         for (const city of tzEntry.cities) {
@@ -37,7 +37,7 @@ async function loadTimezones() {
       }
     });
 
-    // Pre-select if state has values
+    // 상태에 값이 있으면 미리 선택
     const state = getState();
     if (state.timezone) {
       const [region, city] = state.timezone.split('/');
@@ -46,7 +46,7 @@ async function loadTimezones() {
       citySelect.value = city;
     }
   } catch (e) {
-    regionSelect.innerHTML = `<option>Error: ${e}</option>`;
+    regionSelect.innerHTML = `<option>오류: ${e}</option>`;
   }
 }
 
@@ -61,11 +61,11 @@ async function loadLocales() {
       const opt = document.createElement('option');
       opt.value = loc.code;
       opt.textContent = loc.code;
-      if (loc.code === 'en_US.UTF-8') opt.selected = true;
+      if (loc.code === 'ko_KR.UTF-8') opt.selected = true;
       select.appendChild(opt);
     }
   } catch (e) {
-    select.innerHTML = `<option>Error: ${e}</option>`;
+    select.innerHTML = `<option>오류: ${e}</option>`;
   }
 }
 
@@ -84,7 +84,7 @@ async function loadKeymaps() {
       select.appendChild(opt);
     }
   } catch (e) {
-    select.innerHTML = `<option>Error: ${e}</option>`;
+    select.innerHTML = `<option>오류: ${e}</option>`;
   }
 }
 
@@ -95,11 +95,11 @@ function validate_locale() {
   const keymap = document.getElementById('keymap-select').value;
 
   if (!region || !city) {
-    alert('Please select a timezone.');
+    alert('시간대를 선택하세요.');
     return false;
   }
   if (!locale) {
-    alert('Please select a locale.');
+    alert('로케일을 선택하세요.');
     return false;
   }
 

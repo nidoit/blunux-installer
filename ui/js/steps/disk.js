@@ -1,4 +1,4 @@
-// Disk selection step
+// 디스크 선택 단계
 
 let disks = [];
 
@@ -8,7 +8,7 @@ async function onEnter_disk() {
 
 async function refreshDisks() {
   const list = document.getElementById('disk-list');
-  list.innerHTML = '<p>Loading disks...</p>';
+  list.innerHTML = '<p>디스크 로딩 중...</p>';
 
   try {
     disks = await invoke('list_disks');
@@ -35,10 +35,10 @@ async function refreshDisks() {
     }
 
     if (disks.length === 0) {
-      list.innerHTML = '<p>No disks found.</p>';
+      list.innerHTML = '<p>디스크를 찾을 수 없습니다.</p>';
     }
   } catch (e) {
-    list.innerHTML = `<p class="error-text">Failed to list disks: ${e}</p>`;
+    list.innerHTML = `<p class="error-text">디스크 목록 불러오기 실패: ${e}</p>`;
   }
 }
 
@@ -47,16 +47,16 @@ document.getElementById('btn-refresh-disks')?.addEventListener('click', refreshD
 function validate_disk() {
   const state = getState();
   if (!state.selectedDisk) {
-    alert('Please select a disk.');
+    alert('디스크를 선택하세요.');
     return false;
   }
 
-  // Save partition options
+  // 파티션 옵션 저장
   const rootFstype = document.getElementById('root-fstype').value;
   const efiSize = parseInt(document.getElementById('efi-size').value) || 512;
   const swapSize = parseInt(document.getElementById('swap-size').value) || 4096;
 
-  // Determine partition names (e.g., /dev/sda1, /dev/nvme0n1p1)
+  // 파티션 이름 결정 (예: /dev/sda1, /dev/nvme0n1p1)
   const disk = state.selectedDisk;
   const partSuffix = disk.match(/nvme|loop/) ? 'p' : '';
 
