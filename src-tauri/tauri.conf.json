@@ -8,10 +8,9 @@
     "devUrl": "http://localhost:1420"
   },
   "app": {
-    "title": "Blunux Installer",
     "windows": [
       {
-        "title": "Blunux Installer",
+        "title": "Blunux 설치 프로그램",
         "width": 900,
         "height": 640,
         "resizable": true,
