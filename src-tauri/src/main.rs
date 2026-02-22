@@ -2,5 +2,5 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 fn main() {
-    blunux_installer_lib::run();
+    blunux_installer::run();
 }

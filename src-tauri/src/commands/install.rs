@@ -26,6 +26,7 @@ pub struct InstallProgress {
 }
 
 #[derive(Debug, Deserialize)]
+#[allow(dead_code)]
 pub struct InstallConfig {
     pub disk: String,
     pub root_partition: String,
@@ -85,13 +86,6 @@ fn run_cmd(cmd: &str, args: &[&str]) -> Result<String, String> {
     }
 
     Ok(String::from_utf8_lossy(&output.stdout).to_string())
-}
-
-fn chroot_cmd(args: &[&str]) -> Result<String, String> {
-    let mut full_args = vec!["arch-chroot", "/mnt"];
-    full_args.extend_from_slice(args);
-    // arch-chroot is a script, run via sh
-    run_cmd("arch-chroot", &["/mnt"].iter().chain(args.iter()).copied().collect::<Vec<&str>>())
 }
 
 /// Get current installation progress

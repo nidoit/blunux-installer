@@ -136,10 +136,10 @@ pub async fn auto_partition(disk: String, layout: PartitionLayout) -> Result<Str
     run_cmd("sgdisk", &["--zap-all", &disk])?;
 
     // EFI partition
-    let efi_end = format!("+{}M", layout.efi_size_mb);
+    let efi_size = format!("+{}M", layout.efi_size_mb);
     run_cmd(
         "sgdisk",
-        &["-n", "1:0:+512M", "-t", "1:ef00", "-c", "1:EFI", &disk],
+        &["-n", &format!("1:0:{efi_size}"), "-t", "1:ef00", "-c", "1:EFI", &disk],
     )?;
 
     // Swap partition
