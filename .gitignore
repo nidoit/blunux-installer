@@ -1,0 +1,14 @@
+# Build artifacts
+src-tauri/target/
+build/
+out/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db

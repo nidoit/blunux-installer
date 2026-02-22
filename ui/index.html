@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blunux Installer</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div id="app">
+    <!-- Sidebar -->
+    <aside id="sidebar">
+      <div class="sidebar-header">
+        <h2>Blunux</h2>
+        <p class="subtitle">Installer</p>
+      </div>
+      <nav id="step-nav">
+        <ul>
+          <li data-step="welcome" class="active">
+            <span class="step-num">1</span>
+            <span class="step-label">Welcome</span>
+          </li>
+          <li data-step="network">
+            <span class="step-num">2</span>
+            <span class="step-label">Network</span>
+          </li>
+          <li data-step="disk">
+            <span class="step-num">3</span>
+            <span class="step-label">Disk</span>
+          </li>
+          <li data-step="locale">
+            <span class="step-num">4</span>
+            <span class="step-label">Locale</span>
+          </li>
+          <li data-step="user">
+            <span class="step-num">5</span>
+            <span class="step-label">User</span>
+          </li>
+          <li data-step="packages">
+            <span class="step-num">6</span>
+            <span class="step-label">Packages</span>
+          </li>
+          <li data-step="bootloader">
+            <span class="step-num">7</span>
+            <span class="step-label">Bootloader</span>
+          </li>
+          <li data-step="summary">
+            <span class="step-num">8</span>
+            <span class="step-label">Summary</span>
+          </li>
+          <li data-step="install">
+            <span class="step-num">9</span>
+            <span class="step-label">Install</span>
+          </li>
+        </ul>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main id="content">
+      <!-- Welcome -->
+      <section id="step-welcome" class="step active">
+        <h1>Welcome to Blunux</h1>
+        <p>This installer will guide you through setting up Blunux Linux on your computer.</p>
+        <div class="welcome-info">
+          <div class="info-card">
+            <h3>What you'll need</h3>
+            <ul>
+              <li>An internet connection</li>
+              <li>At least 20 GB of free disk space</li>
+              <li>A target disk (all data will be erased)</li>
+            </ul>
+          </div>
+          <div class="info-card">
+            <h3>Installation steps</h3>
+            <ul>
+              <li>Configure network</li>
+              <li>Select and partition disk</li>
+              <li>Set locale and timezone</li>
+              <li>Create user account</li>
+              <li>Choose packages</li>
+              <li>Install bootloader</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- Network -->
+      <section id="step-network" class="step">
+        <h1>Network Configuration</h1>
+        <div id="network-status" class="status-box">
+          <p>Checking connection...</p>
+        </div>
+        <div id="wifi-section" style="display: none;">
+          <h3>WiFi Networks</h3>
+          <button id="btn-wifi-scan" class="btn btn-secondary">Scan Networks</button>
+          <div id="wifi-list" class="list-container"></div>
+          <div id="wifi-connect-form" style="display: none;">
+            <label>Password:
+              <input type="password" id="wifi-password" />
+            </label>
+            <button id="btn-wifi-connect" class="btn btn-primary">Connect</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Disk -->
+      <section id="step-disk" class="step">
+        <h1>Disk Selection</h1>
+        <p>Select the disk where Blunux will be installed. <strong>All data on the selected disk will be erased.</strong></p>
+        <button id="btn-refresh-disks" class="btn btn-secondary">Refresh</button>
+        <div id="disk-list" class="list-container"></div>
+        <div id="partition-options" style="display: none;">
+          <h3>Partition Layout</h3>
+          <div class="form-group">
+            <label>Filesystem:
+              <select id="root-fstype">
+                <option value="ext4" selected>ext4</option>
+                <option value="btrfs">btrfs</option>
+                <option value="xfs">xfs</option>
+              </select>
+            </label>
+          </div>
+          <div class="form-group">
+            <label>EFI Partition Size (MB):
+              <input type="number" id="efi-size" value="512" min="256" max="2048" />
+            </label>
+          </div>
+          <div class="form-group">
+            <label>Swap Size (MB):
+              <input type="number" id="swap-size" value="4096" min="0" max="65536" />
+            </label>
+          </div>
+          <p class="note">Remaining space will be used for the root partition.</p>
+        </div>
+      </section>
+
+      <!-- Locale -->
+      <section id="step-locale" class="step">
+        <h1>Locale & Timezone</h1>
+        <div class="form-group">
+          <label>Timezone Region:
+            <select id="tz-region"><option value="">Loading...</option></select>
+          </label>
+        </div>
+        <div class="form-group">
+          <label>Timezone City:
+            <select id="tz-city"><option value="">Select region first</option></select>
+          </label>
+        </div>
+        <div class="form-group">
+          <label>Locale:
+            <select id="locale-select"><option value="">Loading...</option></select>
+          </label>
+        </div>
+        <div class="form-group">
+          <label>Keyboard Layout:
+            <select id="keymap-select"><option value="">Loading...</option></select>
+          </label>
+        </div>
+      </section>
+
+      <!-- User -->
+      <section id="step-user" class="step">
+        <h1>User Account</h1>
+        <div class="form-group">
+          <label>Hostname:
+            <input type="text" id="hostname" placeholder="blunux" pattern="[a-zA-Z0-9\-]+" />
+          </label>
+        </div>
+        <div class="form-group">
+          <label>Username:
+            <input type="text" id="username" placeholder="user" pattern="[a-z_][a-z0-9_\-]*" />
+          </label>
+        </div>
+        <div class="form-group">
+          <label>Password:
+            <input type="password" id="user-password" />
+          </label>
+        </div>
+        <div class="form-group">
+          <label>Confirm Password:
+            <input type="password" id="user-password-confirm" />
+          </label>
+        </div>
+        <div class="form-group">
+          <label>Root Password:
+            <input type="password" id="root-password" />
+          </label>
+        </div>
+        <div class="form-group">
+          <label>Confirm Root Password:
+            <input type="password" id="root-password-confirm" />
+          </label>
+        </div>
+        <div id="user-errors" class="error-text"></div>
+      </section>
+
+      <!-- Packages -->
+      <section id="step-packages" class="step">
+        <h1>Package Selection</h1>
+        <p>Select which package groups to install. Required groups cannot be deselected.</p>
+        <div id="config-packages" class="package-groups"></div>
+        <h3>Additional Packages</h3>
+        <div id="extra-packages" class="package-groups"></div>
+      </section>
+
+      <!-- Bootloader -->
+      <section id="step-bootloader" class="step">
+        <h1>Bootloader</h1>
+        <p>Select the bootloader to install.</p>
+        <div class="bootloader-options">
+          <label class="radio-card selected">
+            <input type="radio" name="bootloader" value="grub" checked />
+            <div class="radio-card-content">
+              <h3>GRUB</h3>
+              <p>Widely supported, works with both BIOS and UEFI. Recommended for most systems.</p>
+            </div>
+          </label>
+          <label class="radio-card">
+            <input type="radio" name="bootloader" value="systemd-boot" />
+            <div class="radio-card-content">
+              <h3>systemd-boot</h3>
+              <p>Lightweight, UEFI-only bootloader. Simpler configuration, faster boot times.</p>
+            </div>
+          </label>
+        </div>
+        <h3>Services to Enable</h3>
+        <div class="service-list">
+          <label><input type="checkbox" value="NetworkManager" checked /> NetworkManager</label>
+          <label><input type="checkbox" value="bluetooth" checked /> Bluetooth</label>
+          <label><input type="checkbox" value="sddm" checked /> SDDM (Display Manager)</label>
+          <label><input type="checkbox" value="fstrim.timer" checked /> SSD TRIM Timer</label>
+          <label><input type="checkbox" value="cups" /> CUPS (Printing)</label>
+          <label><input type="checkbox" value="sshd" /> SSH Server</label>
+        </div>
+      </section>
+
+      <!-- Summary -->
+      <section id="step-summary" class="step">
+        <h1>Installation Summary</h1>
+        <p>Review your settings before installing.</p>
+        <div id="summary-content" class="summary-grid"></div>
+        <div class="warning-box">
+          <strong>Warning:</strong> This will erase all data on the selected disk. Make sure you have backed up any important data.
+        </div>
+      </section>
+
+      <!-- Install -->
+      <section id="step-install" class="step">
+        <h1>Installing Blunux</h1>
+        <div id="install-progress-container">
+          <div class="progress-bar">
+            <div id="progress-fill" class="progress-fill" style="width: 0%"></div>
+          </div>
+          <p id="progress-message">Waiting to start...</p>
+          <p id="progress-percent">0%</p>
+        </div>
+        <div id="install-done" style="display: none;">
+          <h2>Installation Complete!</h2>
+          <p>Blunux has been installed successfully. You can now reboot into your new system.</p>
+          <button id="btn-reboot" class="btn btn-primary">Reboot Now</button>
+        </div>
+        <div id="install-error" style="display: none;">
+          <h2>Installation Failed</h2>
+          <p id="install-error-msg" class="error-text"></p>
+        </div>
+      </section>
+
+      <!-- Navigation -->
+      <div id="nav-buttons">
+        <button id="btn-prev" class="btn btn-secondary" style="display: none;">Back</button>
+        <div class="spacer"></div>
+        <button id="btn-next" class="btn btn-primary">Next</button>
+      </div>
+    </main>
+  </div>
+
+  <script src="js/app.js"></script>
+  <script src="js/steps/welcome.js"></script>
+  <script src="js/steps/network.js"></script>
+  <script src="js/steps/disk.js"></script>
+  <script src="js/steps/locale.js"></script>
+  <script src="js/steps/user.js"></script>
+  <script src="js/steps/packages.js"></script>
+  <script src="js/steps/bootloader.js"></script>
+  <script src="js/steps/summary.js"></script>
+  <script src="js/steps/install.js"></script>
+</body>
+</html>
